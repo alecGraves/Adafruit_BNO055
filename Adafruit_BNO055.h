@@ -28,6 +28,9 @@
 #include <Adafruit_Sensor.h>
 #include <utility/imumaths.h>
 
+#include <ArduinoSTL.h>
+#include <array>
+
 /** BNO055 Address A **/
 #define BNO055_ADDRESS_A (0x28)
 /** BNO055 Address B **/
@@ -294,7 +297,12 @@ public:
   void getCalibration(uint8_t *system, uint8_t *gyro, uint8_t *accel,
                       uint8_t *mag);
 
+  std::array<int16_t, 3> getLinearAcceleration();
+  std::array<int16_t, 3> getAngularVelocity();
+  std::array<int16_t, 4> getOrientation();
+
   imu::Vector<3> getVector(adafruit_vector_type_t vector_type);
+  std::array<int16_t, 3> getVectorInt(adafruit_vector_type_t vector_type);
   imu::Quaternion getQuat();
   int8_t getTemp();
 

@@ -440,6 +440,73 @@ imu::Vector<3> Adafruit_BNO055::getVector(adafruit_vector_type_t vector_type) {
 }
 
 /*!
+ *  @brief   Gets an unprocessed int array reading from the specified source
+ *  @param   vector_type
+ *           possible vector type values
+ *           [VECTOR_ACCELEROMETER
+ *            VECTOR_MAGNETOMETER
+ *            VECTOR_GYROSCOPE
+ *            VECTOR_EULER
+ *            VECTOR_LINEARACCEL
+ *            VECTOR_GRAVITY]
+ *  @return  vector from specified source
+ */
+std::array<int16_t, 3> Adafruit_BNO055::getVectorInt(adafruit_vector_type_t vector_type) {
+  imu::Vector<3> xyz;
+  uint8_t buffer[6];
+  memset(buffer, 0, 6);
+
+  int16_t x, y, z;
+  x = y = z = 0;
+
+  /* Read vector data (6 bytes) */
+  readLen((adafruit_bno055_reg_t)vector_type, buffer, 6);
+
+  x = ((int16_t)buffer[0]) | (((int16_t)buffer[1]) << 8);
+  y = ((int16_t)buffer[2]) | (((int16_t)buffer[3]) << 8);
+  z = ((int16_t)buffer[4]) | (((int16_t)buffer[5]) << 8);
+
+  /* see above method getVector for reconstruction information */
+
+  return std::array<int16_t, 3> {x, y, z};
+}
+
+/*!
+ *  @brief   Gets an unprocessed int array acceleration reading
+ *  @return  int vector from accel registers
+ */
+std::array<int16_t, 3> Adafruit_BNO055::getLinearAcceleration(){
+  return getVectorInt(VECTOR_LINEARACCEL);
+}
+
+/*!
+ *  @brief   Gets an unprocessed int gyro reading
+ *  @return  int vector from gyro registers
+ */
+std::array<int16_t, 3> Adafruit_BNO055::getAngularVelocity(){
+  return getVectorInt(VECTOR_GYROSCOPE);
+}
+
+/*!
+ *  @brief  Gets a quaternion reading
+ *  @return unprocessed quaternion integers
+ */
+std::array<int16_t, 4> Adafruit_BNO055::getOrientation(){
+  uint8_t buffer[8];
+  memset(buffer, 0, 8);
+  int16_t x(0), y(0), z(0), w(0);
+
+  /* Read quat data (8 bytes) */
+  readLen(BNO055_QUATERNION_DATA_W_LSB_ADDR, buffer, 8);
+  w = (((uint16_t)buffer[1]) << 8) | ((uint16_t)buffer[0]);
+  x = (((uint16_t)buffer[3]) << 8) | ((uint16_t)buffer[2]);
+  y = (((uint16_t)buffer[5]) << 8) | ((uint16_t)buffer[4]);
+  z = (((uint16_t)buffer[7]) << 8) | ((uint16_t)buffer[6]);
+
+  return std::array<int16_t, 4> {w, x, y, z};
+}
+
+/*!
  *  @brief  Gets a quaternion reading from the specified source
  *  @return quaternion reading
  */
