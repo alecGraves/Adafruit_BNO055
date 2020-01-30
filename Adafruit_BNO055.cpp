@@ -476,7 +476,7 @@ std::array<int16_t, 3> Adafruit_BNO055::getVectorInt(adafruit_vector_type_t vect
  *  @return  int vector from accel registers
  */
 std::array<int16_t, 3> Adafruit_BNO055::getLinearAcceleration(){
-  return getVectorInt(VECTOR_LINEARACCEL);
+  return getVectorInt(VECTOR_ACCELEROMETER);
 }
 
 /*!
